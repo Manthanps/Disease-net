@@ -1,0 +1,119 @@
+{
+  "tabular": {
+    "blood": {
+      "csv_path": "blood cancer/biased_leukemia_dataset.csv",
+      "target_col": "Leukemia_Status",
+      "drop_columns": [
+        "SocioEconomic",
+        "Socio Economic",
+        "Socio_Economic",
+        "Socioeconomic_Status",
+        "Socioeconomic Status",
+        "Urban_Rural",
+        "Urban Rural",
+        "Patient_ID",
+        "Patient ID",
+        "Country",
+        "Ethnicity",
+        "Age",
+        "Gender",
+        "Sex",
+        "WBC_Count",
+        "WBC Count",
+        "RBC_Count",
+        "RBC Count"
+      ],
+      "sample_rows": 6000,
+      "use_smote": true,
+      "use_scaler": true,
+      "model": {
+        "type": "RandomForestClassifier",
+        "params": {
+          "n_estimators": 80,
+          "max_depth": 12,
+          "min_samples_split": 50,
+          "min_samples_leaf": 20,
+          "random_state": 42
+        }
+      }
+    },
+    "blood_clinical": {
+      "csv_path": "blood cancer/Leukemia_GSE9476.csv",
+      "target_col": "type",
+      "sample_rows": 2000,
+      "use_smote": false,
+      "use_scaler": false,
+      "model": {
+        "type": "RandomForestClassifier",
+        "params": {
+          "n_estimators": 60,
+          "random_state": 42
+        }
+      }
+    },
+    "lung": {
+      "csv_path": "lung cancer/survey lung cancer.csv",
+      "target_col": "LUNG_CANCER",
+      "strip_columns": true,
+      "drop_columns": [
+        "SocioEconomic",
+        "Socio Economic",
+        "Socio_Economic",
+        "Socioeconomic_Status",
+        "Socioeconomic Status",
+        "Ethnicity",
+        "RBC",
+        "RBC_Count",
+        "WBC",
+        "WBC_Count",
+        "Age",
+        "Sex",
+        "Gender"
+      ],
+      "sample_rows": 6000,
+      "label_map": {
+        "YES": 1,
+        "NO": 0
+      },
+      "use_smote": false,
+      "use_scaler": false,
+      "model": {
+        "type": "RandomForestClassifier",
+        "params": {
+          "n_estimators": 80,
+          "random_state": 42
+        }
+      }
+    },
+    "heart": {
+      "csv_path": "heart attack/heart_2020_cleaned.csv",
+      "target_col": "HeartDisease",
+      "label_map": {
+        "Yes": 1,
+        "No": 0
+      },
+      "sample_rows": 4000,
+      "use_smote": false,
+      "use_scaler": false,
+      "model": {
+        "type": "RandomForestClassifier",
+        "params": {
+          "n_estimators": 120,
+          "random_state": 42
+        }
+      }
+    }
+  },
+  "images": {
+    "blood": {
+      "model_type": "keras_cnn",
+      "model_path": "artifacts/blood_cnn_best_model.h5",
+      "dataset_path": "blood cancer/Blood cell Cancer [ALL]"
+    },
+    "lung": {
+      "model_type": "torch_densenet",
+      "model_path": "artifacts/densenet_lung.pth",
+      "dataset_path": "lung cancer/lung_colon_image_set/final_dataset"
+    }
+  }
+}

@@ -1,0 +1,394 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Mini Project UI</title>
+    <style>
+      :root {
+        --bg: #f4f8fb;
+        --panel: #ffffff;
+        --panel-2: #f7fbff;
+        --accent: #0aa7a8;
+        --accent-2: #1d4ed8;
+        --text: #0f172a;
+        --muted: #5b6b7f;
+        --border: #d9e2ec;
+        --glow: rgba(10, 167, 168, 0.18);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family: "Merriweather Sans", "Segoe UI", sans-serif;
+        color: var(--text);
+        background:
+          radial-gradient(700px 350px at 15% 0%, rgba(10, 167, 168, 0.08), transparent 60%),
+          radial-gradient(700px 350px at 90% 0%, rgba(29, 78, 216, 0.08), transparent 60%),
+          linear-gradient(180deg, #f4f8fb, #eef5fb 55%, #f7fafc);
+        min-height: 100vh;
+      }
+      .hero {
+        padding: 28px 24px 10px;
+        display: grid;
+        gap: 8px;
+      }
+      .title {
+        font-size: 28px;
+        letter-spacing: 0.2px;
+        margin: 0;
+      }
+      .subtitle {
+        color: var(--muted);
+        margin: 0;
+        font-size: 14px;
+      }
+      .container {
+        padding: 16px 24px 32px;
+        display: grid;
+        gap: 16px;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: 1.05fr 0.95fr;
+        gap: 16px;
+      }
+      .card {
+        background: linear-gradient(180deg, var(--panel), var(--panel-2));
+        border: 1px solid var(--border);
+        padding: 16px;
+        border-radius: 14px;
+        box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08), inset 0 0 0 1px rgba(255, 255, 255, 0.6);
+      }
+      .row {
+        margin-bottom: 12px;
+      }
+      label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 6px;
+        color: #1f2a44;
+      }
+      input, select, button, textarea {
+        width: 100%;
+        padding: 10px 12px;
+        font-size: 14px;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        background: #ffffff;
+        color: var(--text);
+        outline: none;
+        transition: border 0.2s ease, box-shadow 0.2s ease, transform 0.05s ease;
+      }
+      input:focus, select:focus, textarea:focus {
+        border-color: var(--accent-2);
+        box-shadow: 0 0 0 3px var(--glow);
+      }
+      button {
+        background: linear-gradient(135deg, var(--accent), var(--accent-2));
+        border: none;
+        color: #ffffff;
+        font-weight: 700;
+        cursor: pointer;
+      }
+      button:hover {
+        transform: translateY(-1px);
+      }
+      .result {
+        white-space: pre-wrap;
+        background: #f8fbff;
+        padding: 12px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        min-height: 64px;
+      }
+      .pill {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        background: #eef5fb;
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .img-wrap {
+        border: 1px dashed var(--border);
+        border-radius: 12px;
+        padding: 10px;
+        background: #f8fbff;
+      }
+      img {
+        max-width: 100%;
+        display: block;
+        border-radius: 10px;
+      }
+      .fade-in {
+        animation: fade 0.6s ease;
+      }
+      @keyframes fade {
+        from { opacity: 0; transform: translateY(6px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      @media (max-width: 900px) {
+        .grid {
+          grid-template-columns: 1fr;
+        }
+        .title {
+          font-size: 24px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="hero">
+      <h2 class="title">Mini Project Prediction Studio</h2>
+      <p class="subtitle">Run tabular and image predictions with clear outputs and fast feedback.</p>
+    </div>
+
+    <div class="container">
+    <div class="grid">
+      <div class="card fade-in">
+        <div class="row">
+          <label for="apiKey">API Key (optional)</label>
+          <input type="text" id="apiKey" placeholder="x-api-key value" />
+        </div>
+        <div class="row">
+          <label for="disease">Disease</label>
+          <select id="disease">
+            <option value="blood">Blood</option>
+            <option value="lung">Lung</option>
+            <option value="heart">Heart</option>
+          </select>
+        </div>
+        <div class="row" id="clinical-toggle">
+          <label>
+            <input type="checkbox" id="useClinical" />
+            Use Clinical Data (blood only)
+          </label>
+        </div>
+        <div class="row">
+          <span class="pill">Auto-fill defaults if empty</span>
+        </div>
+        <div class="row" id="schema-area"></div>
+        <div class="row" id="clinical-area" style="display:none;">
+          <label for="clinicalFile">Clinical CSV Upload</label>
+          <input type="file" id="clinicalFile" accept=".csv" />
+          <div class="pill" style="margin-top:8px;">Upload CSV for clinical prediction</div>
+        </div>
+        <div class="row" id="image-area">
+          <label for="image">Upload Image</label>
+          <input type="file" id="image" accept="image/*" />
+        </div>
+        <div class="row">
+          <button id="predict">Predict</button>
+        </div>
+      </div>
+
+      <div class="card fade-in">
+        <div class="row">
+          <label>Prediction Output</label>
+          <div id="output" class="result">No output yet.</div>
+        </div>
+        <div class="row">
+          <label>Explanation</label>
+          <div id="explain" class="result">No explanation yet.</div>
+        </div>
+        <div class="row">
+          <label>Grad-CAM (Image)</label>
+          <div class="img-wrap">
+            <img id="gradcam" />
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+
+    <script>
+      const diseaseEl = document.getElementById("disease");
+      const schemaArea = document.getElementById("schema-area");
+      const imageArea = document.getElementById("image-area");
+      const clinicalToggle = document.getElementById("clinical-toggle");
+      const useClinicalEl = document.getElementById("useClinical");
+      const clinicalArea = document.getElementById("clinical-area");
+      const outputEl = document.getElementById("output");
+      const explainEl = document.getElementById("explain");
+      const gradcamEl = document.getElementById("gradcam");
+      const apiKeyEl = document.getElementById("apiKey");
+
+      function formatError(data, fallback) {
+        if (data && typeof data.detail === "string" && data.detail.trim()) {
+          return data.detail;
+        }
+        return fallback;
+      }
+
+      function currentDiseaseKey() {
+        const disease = diseaseEl.value;
+        if (disease === "blood" && useClinicalEl.checked) return "blood_clinical";
+        return disease;
+      }
+
+      async function loadSchema() {
+        const disease = currentDiseaseKey();
+        schemaArea.innerHTML = "";
+        const headers = {};
+        if (apiKeyEl.value) headers["x-api-key"] = apiKeyEl.value;
+        const res = await fetch(`/schema/tabular/${disease}`, { headers });
+        const data = await res.json();
+        const fields = data.fields || [];
+        if (data.note) {
+          const div = document.createElement("div");
+          div.className = "row";
+          div.innerHTML = `<div class="pill">${data.note}</div>`;
+          schemaArea.appendChild(div);
+        }
+        fields.forEach((f) => {
+          const div = document.createElement("div");
+          div.className = "row";
+          div.innerHTML = `
+            <label>${f.name} <span class="pill">${f.type}</span></label>
+            <input type="${f.type === "number" ? "number" : "text"}" data-field="${f.name}" value="" placeholder="${f.default ?? ""}" />
+          `;
+          schemaArea.appendChild(div);
+        });
+      }
+
+      async function predict() {
+        const disease = currentDiseaseKey();
+        outputEl.textContent = "Working...";
+        explainEl.textContent = "";
+        gradcamEl.src = "";
+
+        if (disease === "blood_clinical") {
+          const fileInput = document.getElementById("clinicalFile");
+          if (!fileInput.files.length) {
+            outputEl.textContent = "Please upload a clinical CSV file.";
+            return;
+          }
+          const form = new FormData();
+          form.append("file", fileInput.files[0]);
+          const headers = {};
+          if (apiKeyEl.value) headers["x-api-key"] = apiKeyEl.value;
+          const csvRes = await fetch(`/predict/tabular/${disease}/csv`, {
+            method: "POST",
+            headers,
+            body: form,
+          });
+          const csvData = await csvRes.json();
+          outputEl.textContent = csvData.prediction ?? "No prediction";
+          const feats = csvData.top_features || [];
+          if (Array.isArray(feats) && feats.length) {
+            explainEl.textContent = feats
+              .map((f) => `${f.feature}: ${Number(f.impact).toFixed(4)}`)
+              .join("\n");
+          } else {
+            explainEl.textContent = "No explanation available.";
+          }
+          return;
+        }
+
+        const inputs = schemaArea.querySelectorAll("input[data-field]");
+        const payload = {};
+        inputs.forEach((inp) => {
+          payload[inp.dataset.field] = inp.value;
+        });
+
+        const headers = { "Content-Type": "application/json" };
+        if (apiKeyEl.value) headers["x-api-key"] = apiKeyEl.value;
+
+        // Tabular prediction
+        const tabRes = await fetch(`/predict/tabular/${disease}/explain`, {
+          method: "POST",
+          headers,
+          body: JSON.stringify(payload),
+        });
+        const tabData = await tabRes.json();
+        if (!tabRes.ok) {
+          outputEl.textContent = formatError(tabData, "Prediction failed.");
+          explainEl.textContent = "No explanation available.";
+          return;
+        }
+        outputEl.textContent = tabData.prediction ?? "No prediction";
+        const feats = tabData.top_features || [];
+        if (Array.isArray(feats) && feats.length) {
+          explainEl.textContent = feats
+            .map((f) => `${f.feature}: ${Number(f.impact).toFixed(4)}`)
+            .join("\n");
+        } else {
+          explainEl.textContent = "No explanation available.";
+        }
+
+        // Image prediction (optional)
+        const fileInput = document.getElementById("image");
+        if (fileInput.files.length) {
+          if (disease === "heart") {
+            outputEl.textContent += "\n\nImage prediction not supported for heart.";
+          } else {
+            const form = new FormData();
+            form.append("file", fileInput.files[0]);
+            const imgHeaders = {};
+            if (apiKeyEl.value) imgHeaders["x-api-key"] = apiKeyEl.value;
+            const imgRes = await fetch(`/predict/image/${disease}/explain`, {
+              method: "POST",
+              headers: imgHeaders,
+              body: form,
+            });
+            const imgData = await imgRes.json();
+            if (!imgRes.ok) {
+              explainEl.textContent += `\n\nGrad-CAM unavailable: ${formatError(imgData, "Image explanation failed.")}`;
+              return;
+            }
+            if (imgData.prediction) {
+              outputEl.textContent += `\n${imgData.prediction}`;
+            }
+            if (imgData.gradcam_png_base64) {
+              gradcamEl.src = `data:image/png;base64,${imgData.gradcam_png_base64}`;
+            } else {
+              explainEl.textContent += "\n\nGrad-CAM unavailable: No heatmap returned.";
+            }
+          }
+        }
+      }
+
+      diseaseEl.addEventListener("change", loadSchema);
+      document.getElementById("predict").addEventListener("click", predict);
+
+      function updateImageVisibility() {
+        const disease = diseaseEl.value;
+        if (disease === "heart") {
+          imageArea.style.display = "none";
+        } else {
+          imageArea.style.display = "block";
+        }
+      }
+
+      function updateClinicalVisibility() {
+        const disease = diseaseEl.value;
+        if (disease === "blood") {
+          clinicalToggle.style.display = "block";
+          clinicalArea.style.display = useClinicalEl.checked ? "block" : "none";
+          schemaArea.style.display = useClinicalEl.checked ? "none" : "block";
+        } else {
+          clinicalToggle.style.display = "none";
+          clinicalArea.style.display = "none";
+          schemaArea.style.display = "block";
+        }
+      }
+
+      diseaseEl.addEventListener("change", () => {
+        updateImageVisibility();
+        updateClinicalVisibility();
+        loadSchema();
+      });
+      useClinicalEl.addEventListener("change", () => {
+        updateClinicalVisibility();
+        loadSchema();
+      });
+
+      loadSchema();
+      updateImageVisibility();
+      updateClinicalVisibility();
+    </script>
+  </body>
+</html>
